@@ -10,6 +10,7 @@ interface StateInt {
 interface Pointer {
     state: StateInt;
     source: string;
+    end: number;
     init(): void;
     advance(): void;
     get peek(): number;
@@ -19,11 +20,13 @@ interface Pointer {
 class ChartPointer implements Pointer {
     state: StateInt;
     source: string;
+    end: number;
     constructor(source: string) {
         this.source = source;
         this.init();
     }
     init() {
+        this.end = this.source.length - 1;
         this.state = {
             peek: this.getChart(0),
             index: 0,
@@ -41,7 +44,7 @@ class ChartPointer implements Pointer {
             this.state.column++;
         }
         this.state.index++;
-        this.state.peek = this.getChart(this.state.index);
+        this.state.peek = this.state.index > this.end ? 0 : this.getChart(this.state.index);
         
     }
 

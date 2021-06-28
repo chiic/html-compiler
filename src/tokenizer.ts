@@ -2,7 +2,7 @@ import { ChartPointer } from './chart_pointer';
 
 import type { Pointer, StateInt } from './chart_pointer';
 
-import { isWhiteSpace } from './utils';
+import { isWhiteSpace, nameEnd } from './utils';
 
 import * as sym from './symbols';
 
@@ -45,7 +45,13 @@ export class Tokenizer {
     tokenize() {
         while (this.pointer.peek !== sym.EOF) {
             if (this.captureCharWith(sym.LT)) {
-                if (this.captureCharWith(sym.DL)) {
+                if(this.captureCharWith(sym.EM)) {
+                    if(this.captureCharWith(sym.LINE)) {
+                        this.captureComment();
+                    } else if(this.captureCharWith(sym.BRACKETS)) {
+                        this.captureCdata();
+                    }
+                } else if (this.captureCharWith(sym.DL)) {
                     this.captureEndTag();
                 } else {
                     this.captureStartTag();
@@ -53,6 +59,12 @@ export class Tokenizer {
             }
         }
     }
+    // comment
+    captureComment() {
+        this.requireChar(sym.LINE);
+    }
+
+    captureCdata() {}
 
     captureCharWith(code) {
         if (this.pointer.peek === code) {
@@ -118,14 +130,14 @@ export class Tokenizer {
         this.pointer.advance();
         const _end = this._cloneState();
         const quotaToken = new Token(TokenType.QUOTA, { start: _start, end: _end })
-        this.tokens.push(quotaToken);
+        this.tokens.push(quotaToken); 
     }
 
 
     // 获取标签和attr的属性
     captureTagOrAttr() {
         const start = this._cloneState();
-        while (!isWhiteSpace(this.pointer.peek) && this.pointer.peek !== sym.EQ) {
+        while (!nameEnd(this.pointer.peek)) {
             this.pointer.advance();
         }
         const name = this.getCharsName(start, this.pointer.state);

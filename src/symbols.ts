@@ -18,4 +18,10 @@ export const RT = 62; // >
 
 export const EQ = 61; // =
 
+export const EM = 33; // !
+
+export const LINE = 45; // -
+
+export const BRACKETS = 91; // [
+
 
