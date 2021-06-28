@@ -62,7 +62,35 @@ export class Tokenizer {
     // comment
     captureComment() {
         this.requireChar(sym.LINE);
+        const _start = this._cloneState();
+        this.getCommentContent();
+        const token = new Token(
+            TokenType.COMMENT,
+            { value: this.pointer.getCharsName(_start, this.pointer.state) }
+        );
+        this.tokens.push(token);
+        this.skipUntilNotStr('-->');
     }
+
+    skipUntilNotStr(str) {
+        for (let i = 0; i < str.length; i++) {
+            if(!this.captureCharWith(str.charCodeAt(i))) {
+                throw 'error';
+            } 
+        }
+    }
+
+
+    getCommentContent() {
+        while(this.pointer) {
+            if(!this.pointer.searchStr('-->')) {
+                this.pointer.advance();
+            } else {
+                break;
+            }
+        }
+    }
+
 
     captureCdata() {}
 
@@ -140,7 +168,7 @@ export class Tokenizer {
         while (!nameEnd(this.pointer.peek)) {
             this.pointer.advance();
         }
-        const name = this.getCharsName(start, this.pointer.state);
+        const name = this.pointer.getCharsName(start, this.pointer.state);
         return {
             name,
             start: start,
@@ -164,7 +192,7 @@ export class Tokenizer {
 
     requireChar(code) {
         if (this.pointer.peek !== code) {
-            throw 'parser error at' + this.pointer.source.slice(this.pointer.state.index);
+            throw 'parser error at' + this.pointer.source.slice(this.pointer.index);
         }
         this.pointer.advance();
     }

@@ -14,6 +14,9 @@ interface Pointer {
     init(): void;
     advance(): void;
     get peek(): number;
+    get index(): number;
+    searchStr(str: string): boolean;
+    getCharsName(a: StateInt, b: StateInt): string;
 }
 
 
@@ -52,8 +55,30 @@ class ChartPointer implements Pointer {
         return this.state.peek;
     }
 
+    get index() {
+        return this.state.index;
+    }
+
     getChart(index) {
         return this.source.charCodeAt(index);
+    }
+
+    // search str
+    searchStr(str) {
+        const len = str.length;
+        let _index = this.state.index;
+        for(let i = 0; i < len; i++) {
+            if(this.getChart(_index) !== str.charCodeAt(i)) {
+                return false;
+            }
+            _index++;
+        }
+        return true;
+        
+    }
+
+    getCharsName(start, end) {
+        return this.source.substring(start.index, end.index);
     }
 }
 
