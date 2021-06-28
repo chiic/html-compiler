@@ -1,9 +1,7 @@
 import * as sym from './symbols';
 
-
-
 interface StateInt {
-    peek: string;
+    peek: number;
     index: number;
     line: number;
     column: number;
@@ -14,6 +12,7 @@ interface Pointer {
     source: string;
     init(): void;
     advance(): void;
+    get peek(): number;
 }
 
 
@@ -26,7 +25,7 @@ class ChartPointer implements Pointer {
     }
     init() {
         this.state = {
-            peek: this.source.charAt(0),
+            peek: this.getChart(0),
             index: 0,
             line: 0,
             column: 0
@@ -34,19 +33,27 @@ class ChartPointer implements Pointer {
     }
 
     advance() {
-        const char = this.source.charAt(this.state.index);
-        if(char === sym.NL) {
+        const char = this.getChart(this.state.index);
+        if(char === sym.LF) {
             this.state.line++;
             this.state.column = 0;
         } else {
             this.state.column++;
         }
         this.state.index++;
-        this.state.peek = this.source.charAt(this.state.index);
+        this.state.peek = this.getChart(this.state.index);
         
+    }
+
+    get peek() {
+        return this.state.peek;
+    }
+
+    getChart(index) {
+        return this.source.charCodeAt(index);
     }
 }
 
 export { ChartPointer }
 
-export type { Pointer }
+export type { Pointer, StateInt }
