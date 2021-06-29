@@ -17,7 +17,7 @@ interface Pointer {
     get index(): number;
     getCharCode(index: number): number;
     searchStr(str: string): boolean;
-    getCharsName(a: StateInt, b: StateInt): string;
+    getChars(a: StateInt, b: StateInt): string;
     getPreState(): StateInt;
     _cloneState(): StateInt;
 }
@@ -91,7 +91,7 @@ class ChartPointer implements Pointer {
         
     }
 
-    getCharsName(start, end) {
+    getChars(start, end) {
         return this.source.substring(start.index, end.index);
     }
 

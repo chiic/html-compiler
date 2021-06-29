@@ -68,7 +68,11 @@ export class Tokenizer {
         this.getCommentContent();
         const token = new Token(
             TokenType.COMMENT,
-            { value: this.pointer.getCharsName(_start, this.pointer.state) }
+            {
+                value: this.pointer.getChars(_start, this.pointer.state),
+                start: _start,
+                end: this.pointer._cloneState()
+            }
         );
         this.tokens.push(token);
         this.skipUntilNotStr('-->');
@@ -189,16 +193,12 @@ export class Tokenizer {
         while (!nameEnd(this.pointer.peek)) {
             this.pointer.advance();
         }
-        const name = this.pointer.getCharsName(start, this.pointer.state);
+        const name = this.pointer.getChars(start, this.pointer.state);
         return {
             name,
             start: start,
             end: this.pointer.state
         }
-    }
-
-    getCharsName(start, end) {
-        return this.pointer.source.substring(start.index, end.index);
     }
 
     requireChar(code) {
