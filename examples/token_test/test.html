@@ -1,9 +1,13 @@
-<!-- connet ------ mooo -->
-<ul>
-    <li class="l" *ngFor="let o of arr">test1</li>
-    <li>test2</li>
-    <li>test3</li>
-</ul>
-<div>
-    <p>title<</p>
+<section class="btn-auto-list-wrap" >
+<div class="btn-list"  [class.btn-hide]="!isExpand" >
+    <nz-badge class="right15 btn-badge"  (click)="onClick(item)"  *ngFor="let item of btnList"  >
+        <button class="btn-wrap"  [class.btn-selected]="item.selected" >{{'a.v' | translate}}</button>
+    </nz-badge>
 </div>
+<div class="btn-icon"  (click)="isExpandChange.emit(!isExpand)" >
+    <i nz-icon iconfont="iconHS-zhankai"  *ngIf="!isExpand; else elseTemplate"  >
+    </i>
+    <ng-template #elseTemplate>
+        <i nz-icon iconfont="iconHS-zhankai-copy" ></i>
+    </ng-template>{{'a.v' | translate}}</div>
+</section>

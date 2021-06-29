@@ -177,7 +177,7 @@ export class Tokenizer {
             str += String.fromCharCode(this.pointer.peek);
             this.pointer.advance();
         }
-        const token = new Token(TokenType.ATTR_VALUE, {value: str, start: end, end: this.pointer.state});
+        const token = new Token(TokenType.ATTR_VALUE, {value: str, start: end, end: this.pointer._cloneState()});
         this.tokens.push(token);
         const _start = this.pointer._cloneState();
         this.pointer.advance();
@@ -197,7 +197,7 @@ export class Tokenizer {
         return {
             name,
             start: start,
-            end: this.pointer.state
+            end: this.pointer._cloneState()
         }
     }
 

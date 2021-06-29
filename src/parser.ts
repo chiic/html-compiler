@@ -1,5 +1,5 @@
 import { Stack } from './stack';
-import { Parts, Tokenizer, TokenType } from './tokenizer';
+import { Parts, Token, Tokenizer, TokenType } from './tokenizer';
 import { isCloseSelf } from './utils';
 import type { StateInt } from './chart_pointer';
 
@@ -65,6 +65,7 @@ export class Parser {
                 this.eatUntilNotText();
             }
         }
+        return this.stack.getStack();
     }
 
     eatComment() {
@@ -87,8 +88,10 @@ export class Parser {
         }
         this.offset++;
         const attrs = [];
-        while(this.getOffsetToken.type !== TokenType.TEXT &&
+        while(this.getOffsetToken &&
+              this.getOffsetToken.type !== TokenType.TEXT &&
               this.getOffsetToken.type !== TokenType.TAG_START &&
+              this.getOffsetToken.type !== TokenType.TAG_END &&
               this.getOffsetToken.type !== TokenType.COMMENT     
         ) {
             const attr = {
@@ -136,7 +139,7 @@ export class Parser {
             parts: new PartsSpan(this.getOffsetToken.parts)
         }
         this.offset++;
-        while (this.getOffsetToken.type === TokenType.TEXT) {
+        while (this.getOffsetToken && this.getOffsetToken.type === TokenType.TEXT) {
             node.value += this.getOffsetToken.parts.value;
             node.parts.end = new Span(this.getOffsetToken.parts.end);
             this.offset++;
