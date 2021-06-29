@@ -6,7 +6,7 @@
 
 :green_apple: lexer token
 
-:zero: parser
+:green_apple: parser
 
 :zero: transform
 
