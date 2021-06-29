@@ -7,3 +7,7 @@ export function isWhiteSpace(code) {
 export function nameEnd(code) {
     return isWhiteSpace(code) || code === sym.RT || code === sym.EQ;
 }
+
+export function isTagNameStart(code) {
+    return (code >= sym.$a && code <= sym.$z) || (code >= sym.$A && code <= sym.$Z);
+}

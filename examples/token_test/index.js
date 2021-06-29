@@ -1,7 +1,10 @@
 const { Tokenizer } = require('../../dist/tokenizer');
+const { writeFile, readFileSync } = require('fs');
+const path = require('path');
 
-const izer = new Tokenizer(`<!-- pppp --><p class="a"></p>`);
+const content = readFileSync(path.resolve(__dirname, 'test.html'), 'utf8')
+const izer = new Tokenizer(content);
 
 izer.tokenize();
 
-console.log(izer.tokens);
+writeFile(path.resolve(__dirname, 'test.json'), JSON.stringify(izer.tokens), (err) => {});

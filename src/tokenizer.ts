@@ -2,7 +2,7 @@ import { ChartPointer } from './chart_pointer';
 
 import type { Pointer, StateInt } from './chart_pointer';
 
-import { isWhiteSpace, nameEnd } from './utils';
+import { isTagNameStart, isWhiteSpace, nameEnd } from './utils';
 
 import * as sym from './symbols';
 
@@ -56,13 +56,15 @@ export class Tokenizer {
                 } else {
                     this.captureStartTag();
                 }
+            } else {
+                this.textHandler();
             }
         }
     }
     // comment
     captureComment() {
         this.requireChar(sym.LINE);
-        const _start = this._cloneState();
+        const _start = this.pointer._cloneState();
         this.getCommentContent();
         const token = new Token(
             TokenType.COMMENT,
@@ -91,6 +93,16 @@ export class Tokenizer {
         }
     }
 
+    textHandler() {
+        let text = '';
+        const start = this.pointer._cloneState();
+        while(!(this.pointer.peek === sym.LT || this.pointer.peek === sym.EOF)) {
+            text += String.fromCharCode(this.pointer.peek);
+            this.pointer.advance();
+        }
+        const token = new Token(TokenType.TEXT, {value: text, start, end: this.pointer._cloneState()});
+        this.tokens.push(token);
+    }
 
     captureCdata() {}
 
@@ -114,6 +126,15 @@ export class Tokenizer {
     // start tag
     captureStartTag() {
         this.skipWhiteSpace();
+        // <p><</p> < is a text token
+        const first = this.pointer.peek;
+        if(!isTagNameStart(first)) {
+            const end = this.pointer._cloneState();
+            const start = this.pointer.getPreState();
+            const _token = new Token(TokenType.TEXT, { value: '<', start, end });
+            this.tokens.push(_token);
+            return;
+        }
         const parts = this.captureTagOrAttr();
         const token = new Token(TokenType.TAG_START, parts);
         this.tokens.push(token);
@@ -143,9 +164,9 @@ export class Tokenizer {
     // attr value
     captureAttrValue() {
         const quota = this.pointer.peek;
-        const start = this._cloneState();
+        const start = this.pointer._cloneState();
         this.pointer.advance();
-        const end = this._cloneState();
+        const end = this.pointer._cloneState();
         this.tokens.push(new Token(TokenType.QUOTA, { start, end }))
         let str = '';
         while(this.pointer.peek !== quota) {
@@ -154,9 +175,9 @@ export class Tokenizer {
         }
         const token = new Token(TokenType.ATTR_VALUE, {value: str, start: end, end: this.pointer.state});
         this.tokens.push(token);
-        const _start = this._cloneState();
+        const _start = this.pointer._cloneState();
         this.pointer.advance();
-        const _end = this._cloneState();
+        const _end = this.pointer._cloneState();
         const quotaToken = new Token(TokenType.QUOTA, { start: _start, end: _end })
         this.tokens.push(quotaToken); 
     }
@@ -164,7 +185,7 @@ export class Tokenizer {
 
     // 获取标签和attr的属性
     captureTagOrAttr() {
-        const start = this._cloneState();
+        const start = this.pointer._cloneState();
         while (!nameEnd(this.pointer.peek)) {
             this.pointer.advance();
         }
@@ -175,16 +196,6 @@ export class Tokenizer {
             end: this.pointer.state
         }
     }
-
-    _cloneState() {
-        const state = {} as StateInt;
-        state.peek = this.pointer.state.peek;
-        state.column = this.pointer.state.column;
-        state.index = this.pointer.state.index;
-        state.line = this.pointer.state.line;
-        return state;
-    }
-
 
     getCharsName(start, end) {
         return this.pointer.source.substring(start.index, end.index);

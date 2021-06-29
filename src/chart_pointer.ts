@@ -15,14 +15,18 @@ interface Pointer {
     advance(): void;
     get peek(): number;
     get index(): number;
+    getCharCode(index: number): number;
     searchStr(str: string): boolean;
     getCharsName(a: StateInt, b: StateInt): string;
+    getPreState(): StateInt;
+    _cloneState(): StateInt;
 }
 
 
 class ChartPointer implements Pointer {
     state: StateInt;
     source: string;
+    preState: StateInt;
     end: number;
     constructor(source: string) {
         this.source = source;
@@ -31,15 +35,16 @@ class ChartPointer implements Pointer {
     init() {
         this.end = this.source.length - 1;
         this.state = {
-            peek: this.getChart(0),
+            peek: this.getCharCode(0),
             index: 0,
-            line: 0,
-            column: 0
+            line: 1,
+            column: 1
         };
     }
 
     advance() {
-        const char = this.getChart(this.state.index);
+        this.preState = this._cloneState();
+        const char = this.getCharCode(this.state.index);
         if(char === sym.LF) {
             this.state.line++;
             this.state.column = 0;
@@ -47,8 +52,17 @@ class ChartPointer implements Pointer {
             this.state.column++;
         }
         this.state.index++;
-        this.state.peek = this.state.index > this.end ? 0 : this.getChart(this.state.index);
+        this.state.peek = this.state.index > this.end ? 0 : this.getCharCode(this.state.index);
         
+    }
+
+    _cloneState() {
+        const state = {} as StateInt;
+        state.peek = this.state.peek;
+        state.column = this.state.column;
+        state.index = this.state.index;
+        state.line = this.state.line;
+        return state;
     }
 
     get peek() {
@@ -59,7 +73,7 @@ class ChartPointer implements Pointer {
         return this.state.index;
     }
 
-    getChart(index) {
+    getCharCode(index) {
         return this.source.charCodeAt(index);
     }
 
@@ -68,7 +82,7 @@ class ChartPointer implements Pointer {
         const len = str.length;
         let _index = this.state.index;
         for(let i = 0; i < len; i++) {
-            if(this.getChart(_index) !== str.charCodeAt(i)) {
+            if(this.getCharCode(_index) !== str.charCodeAt(i)) {
                 return false;
             }
             _index++;
@@ -79,6 +93,10 @@ class ChartPointer implements Pointer {
 
     getCharsName(start, end) {
         return this.source.substring(start.index, end.index);
+    }
+
+    getPreState() {
+        return this.preState;
     }
 }
 

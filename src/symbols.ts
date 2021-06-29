@@ -24,4 +24,12 @@ export const LINE = 45; // -
 
 export const BRACKETS = 91; // [
 
+export const $a = 97; // a
+
+export const $z = 122; // z
+
+export const $A = 65; // A
+
+export const $Z = 90; // Z
+
 
