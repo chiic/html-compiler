@@ -8,7 +8,7 @@
 
 :green_apple: parser
 
-:zero: transform
+:green_apple: transform
 
-:zero: generator code
+:green_apple: generator code
 
