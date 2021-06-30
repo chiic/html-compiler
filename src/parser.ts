@@ -106,6 +106,11 @@ export class Parser {
                 attr.value = this.getOffsetToken.parts.value;
                 attr.parts.end = new Span(this.getOffsetToken.parts.end);
                 this.offset++;
+                if(this.getOffsetToken.type === TokenType.QUOTA) {
+                    this.offset++;
+                } else {
+                    throw 'parser error!'
+                }
             }
             attrs.push(attr);
         }

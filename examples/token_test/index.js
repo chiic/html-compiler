@@ -1,6 +1,6 @@
-const { Parser, traverser, Generator } = require('../../dist');
+const { Parser, traverser, generatorCode } = require('../../dist');
 const { writeFile } = require('fs');
-const { resolve, parse } = require('path');
+const { resolve } = require('path');
 
 
 const parser = new Parser(`<section class="btn-auto-list-wrap">
@@ -14,6 +14,7 @@ const parser = new Parser(`<section class="btn-auto-list-wrap">
             喝茶吗？
         </button>
     </nz-badge>
+    <Ht-v></Ht-v>
 </div>
 <div class="btn-icon" (click)="isExpandChange.emit(!isExpand)">
     <i
@@ -43,6 +44,6 @@ writeFile(resolve(__dirname, './ast.json'), JSON.stringify(ast, null, '\t'), (er
     console.log('parser successfully!');
 });
 
-writeFile(resolve(__dirname, './test.html'), Generator(ast), (err) => {
+writeFile(resolve(__dirname, './test.html'), generatorCode(ast), (err) => {
     console.log('parser successfully!');
 });

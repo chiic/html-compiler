@@ -1,7 +1,7 @@
 import { isCloseSelf } from './utils';
 import { NodeType } from "./parser";
 
-export function Generator(ast) {
+export function generatorCode(ast) {
     return generatorArrayEle(ast[0]);
 }
 
