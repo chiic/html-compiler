@@ -160,6 +160,10 @@ export class Tokenizer {
 
     // attr name
     captureAttrName() {
+        if(this.pointer.peek === sym.DL) {
+            this.pointer.advance();
+            return;
+        }
         const parts = this.captureTagOrAttr();
         const token = new Token(TokenType.ATTR_NAME, parts);
         this.tokens.push(token);
