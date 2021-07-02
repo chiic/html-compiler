@@ -25,7 +25,7 @@ function generatorAttr(attrs) {
 
 function generatorItem(node) {
     if (node.type === NodeType.Comment) {
-        return '<--' + node.value + '-->';
+        return '<!--' + node.value + '-->';
     }
     if(node.type === NodeType.Element) {
         if(isCloseSelf(node.tag)) {
