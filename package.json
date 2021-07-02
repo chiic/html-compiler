@@ -4,8 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "test": "node ./examples/token_test/index.js"
+    "build": "tsc"
   },
   "author": "chiic",
   "license": "MIT",
