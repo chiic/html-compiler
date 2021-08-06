@@ -3,14 +3,25 @@ const { writeFile } = require('fs');
 const { resolve } = require('path');
 
 
-const parser = new Parser(`<div>测试中文text节点</div>`);
+const parser = new Parser(`
+<img src="/img/1.png" /><p class="tets">33</p>额31231兴趣全无
+额31231兴趣全无  <img src="/img/1.png" />额31231兴趣全无<p class="tets">23123</p>
+额31231兴趣全无   <img src="/img/1.png" /><p class="tets">3123</p>
+<img src="/img/1.png" />额31231兴趣全无<p class="tets">33</p>
+<img src="/img/1.png" />额31231兴趣全无<p class="tets">33</p>
+`);
 
 const ast = parser.parse();
 
 traverser(ast, {
-    Text(node) {
-        if(/[\u4e00-\u9fa5]/.test(node.value)) {
-            node.value = `{{'a.v' | translate}}`;
+    // Text(node) {
+    //     if(/[\u4e00-\u9fa5]/.test(node.value)) {
+    //         node.value = `{{'a.v' | translate}}`;
+    //     }
+    // },
+    Attr(node) {
+        if (node.name === 'src') {
+            node.value = `https://baidu.com${node.value}`;
         }
     }
 })
